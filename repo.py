@@ -1,13 +1,26 @@
 import requests
 
-class repos:
 
-    def __init__(self, repo_owner= None, repo_name= None, description= None):
+class Repos:
+    """A class to manage GitHub repos via the API."""
+
+    def __init__(self, token, repo_owner=None, repo_name=None, description=None):
+        """
+        Initialize a Repos object.
+
+        Args:
+            token (str): GitHub access token.
+            repo_owner (str): GitHub username of the repo owner.
+            repo_name (str): Name of the repo.
+            description (str): Description of the repo.
+        """
+        self.token = token
         self.repo_name = repo_name
         self.repo_owner = repo_owner
         self.repo_description = description
-        
-    def repo_creation(self, token, repo_owner= None, repo_name= None,repo_description= None):
+
+    def create(self, token, repo_owner=None, repo_name=None, repo_description=None):
+        """Create a new repo using the API."""
         url = "https://api.github.com/user/repos"
 
         headers = {
@@ -22,49 +35,65 @@ class repos:
         response = requests.post(url, headers=headers, json=data)
 
         if response.status_code == 201:
-            print("repo created")
             self.repo_name = repo_name or self.repo_name
             self.repo_owner = repo_owner or self.repo_owner
             self.repo_description = repo_description or self.repo_description
-
+            return {"status": "success", "massage": "repo created."}
         else:
-            print(f"failed to creat a repo: {response.status_code}")
-            print(response.json())
+            return {
+                "status": "error",
+                "code": response.status_code,
+                "details": response.json(),
+            }
 
-    def repo_deletion(self, token):
+    def delete(self, token):
+        """Delete the repo."""
         url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}"
-        
+
         headers = {
             "Authorization": f"token {token}",
         }
-        
+
         response = requests.delete(url, headers=headers)
-        
+
         if response.status_code == 204:
-            print(f"Repository '{self.repo_owner}/{self.repo_name}' deleted successfully.")
+            return {
+                "status": "success",
+                "message": f"Repository '{self.repo_owner}/{self.repo_name}' deleted.",
+            }
         elif response.status_code == 404:
-            print("Repository not found or you don't have permission to delete it.")
+            return {
+                "status": "error",
+                "message": "Repository not found or no permission.",
+            }
         else:
-            print(f"Failed to delete repository: {response.status_code}")
-            print(response.json())
+            return {
+                "status": "error",
+                "code": response.status_code,
+                "details": response.json(),
+            }
 
-    def repo_info(self):
-        print(f"repo name {self.repo_name}")
-        print(f"repo's owner {self.repo_owner}")
-        print(f"repo's description {self.repo_description}")
-
+    def get(self):
+        """return repo information."""
+        return {
+            "name": self.repo_name,
+            "owner": self.repo_owner,
+            "description": self.repo_description,
+        }
 
     def get_pull_requests(self):
-        if not self.repo_owner or  not self.repo_name:
+        """Fetch pull requests of the repo."""
+        if not self.repo_owner or not self.repo_name:
             print("the repo don't have a an owner or a name")
-            return 
-        url =f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/pulls"
+            return
+        url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/pulls"
 
         response = requests.get(url)
         return response.json()
 
     def get_contributors(self):
-        if not self.repo_owner or  not self.repo_name:
+        """Fetch contributors of the repo."""
+        if not self.repo_owner or not self.repo_name:
             print("the repo don't have a an owner or a name")
             return
         url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/contributors"
