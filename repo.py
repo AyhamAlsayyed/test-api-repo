@@ -4,7 +4,9 @@ import requests
 class Repos:
     """A class to manage GitHub repos via the API."""
 
-    def __init__(self, token, repo_owner=None, repo_name=None, description=None):
+    def __init__(
+        self, repo_owner=None, repo_name=None, description=None, token=None
+    ):
         """
         Initialize a Repos object.
 
@@ -19,7 +21,13 @@ class Repos:
         self.repo_owner = repo_owner
         self.repo_description = description
 
-    def create(self, token, repo_owner=None, repo_name=None, repo_description=None):
+    def create(
+        self,
+        token=None,
+        repo_owner=None,
+        repo_name=None,
+        repo_description=None,
+    ):
         """Create a new repo using the API."""
         url = "https://api.github.com/user/repos"
 
@@ -48,7 +56,9 @@ class Repos:
 
     def delete(self, token):
         """Delete the repo."""
-        url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}"
+        url = (
+            f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}"
+        )
 
         headers = {
             "Authorization": f"token {token}",
@@ -96,6 +106,9 @@ class Repos:
         if not self.repo_owner or not self.repo_name:
             print("the repo don't have a an owner or a name")
             return
-        url = f"https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/contributors"
+        url = (
+            f"https://api.github.com/repos/{self.repo_owner}/"
+            f"{self.repo_name}/contributors"
+        )
         response = requests.get(url)
         return response.json()

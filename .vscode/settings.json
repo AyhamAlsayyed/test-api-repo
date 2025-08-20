@@ -1,0 +1,7 @@
+{
+    "html.format.wrapLineLength": 79,
+    "editor.rulers": [79],
+    "[python]": {
+        "editor.rulers": [79]
+    }
+}

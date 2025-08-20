@@ -1,4 +1,5 @@
 import os
+
 from Repo import Repos
 
 token = os.getenv("GITHUB_TOKEN")
@@ -22,13 +23,15 @@ repo2 = Repos("owner", "repo_name")
 repo2.delete(token)
 """
 
-repo = Repos("octocat", "Spoon-Knife")
+repo = Repos("AyhamAlsayyed", "test-api-repo")
 
 # Example 2: Contributors
 contributors = repo.get_contributors()
 
 for contributor in contributors:
-    print(f"{contributor['login']} — {contributor['contributions']} contributions")
+    print(
+        f"{contributor['login']} — {contributor['contributions']} contributions"
+    )
 
 # Example 3: Pull Requests
 pull_requests = repo.get_pull_requests()
